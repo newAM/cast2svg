@@ -80,7 +80,6 @@ impl Event {
 #[cfg(test)]
 mod test {
     use super::*;
-    use serde_json;
 
     #[test]
     fn header() {

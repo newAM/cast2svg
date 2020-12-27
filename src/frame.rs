@@ -24,6 +24,7 @@ pub enum Color {
 }
 
 impl Color {
+    #[allow(clippy::many_single_char_names)]
     pub fn rgb(&self) -> (u8, u8, u8) {
         match self {
             Color::Black => (0x2e, 0x34, 0x36),
@@ -277,36 +278,32 @@ impl Frame {
                         symbol.fg = current.fg;
                         symbol.intensity = current.intensity;
                         symbol.text.push(ch);
+                    } else if current.attr_eq(&previous) {
+                        debug_assert!(!symbol.text.is_empty());
+                        symbol.text.push(ch);
                     } else {
-                        if current.attr_eq(&previous) {
-                            debug_assert!(!symbol.text.is_empty());
-                            symbol.text.push(ch);
-                        } else {
-                            log::trace!(
-                                "Ending symbol; previous does not match. symbol={}",
-                                symbol.text
-                            );
-                            insert(symbol.clone());
-                            if ch == ' ' {
-                                symbol.text = String::new();
-                            } else {
-                                symbol.text = String::from(ch);
-                            }
-                            symbol.x = column;
-                            symbol.y = row;
-                            symbol.fg = current.fg;
-                            symbol.intensity = current.intensity;
-                        }
-                    }
-                } else {
-                    if !symbol.text.is_empty() {
-                        log::trace!("Ending symbol; unused cell. symbol={}", symbol.text);
+                        log::trace!(
+                            "Ending symbol; previous does not match. symbol={}",
+                            symbol.text
+                        );
                         insert(symbol.clone());
-                        symbol.text = String::new();
+                        if ch == ' ' {
+                            symbol.text = String::new();
+                        } else {
+                            symbol.text = String::from(ch);
+                        }
+                        symbol.x = column;
+                        symbol.y = row;
+                        symbol.fg = current.fg;
+                        symbol.intensity = current.intensity;
                     }
+                } else if !symbol.text.is_empty() {
+                    log::trace!("Ending symbol; unused cell. symbol={}", symbol.text);
+                    insert(symbol.clone());
+                    symbol.text = String::new();
                 }
 
-                previous = current.clone();
+                previous = current;
             }
 
             if !symbol.text.is_empty() {
@@ -493,11 +490,11 @@ impl vte::Perform for Frame {
             'A' => self.move_up(next_param_or(1) as usize),
             'B' | 'e' => self.move_down(next_param_or(1) as usize),
             'm' => {
-                if params.len() == 0 {
+                if params.is_empty() {
                     self.reset_text_formats();
                     return;
                 }
-                while let Some(p) = params_iter.next() {
+                for p in params_iter {
                     match p {
                         [0] => self.reset_text_formats(),
                         [1] => self.intensity = Intensity::Bold,

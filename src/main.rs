@@ -24,7 +24,6 @@ use asciicast::Header;
 use clap::{AppSettings, Clap, ValueHint};
 use frame::{Frame, Symbol};
 
-use serde_json;
 use std::io::{BufRead, BufReader, Write};
 use std::{collections::BTreeMap, path::PathBuf};
 use std::{
@@ -135,7 +134,7 @@ fn read_asciicast(path: PathBuf) -> anyhow::Result<(asciicast::Header, Vec<ascii
 /// frame that they appear in later on.
 ///
 /// [vte]: https://github.com/alacritty/vte
-fn symbol_map(header: &Header, events: &Vec<asciicast::Event>) -> BTreeMap<Symbol, Vec<usize>> {
+fn symbol_map(header: &Header, events: &[asciicast::Event]) -> BTreeMap<Symbol, Vec<usize>> {
     let mut frame: Frame = Frame::new(header.width, header.height);
     let mut parser: vte::Parser = vte::Parser::new();
     let mut symbol_map: BTreeMap<Symbol, Vec<usize>> = BTreeMap::new();
@@ -343,7 +342,7 @@ fn main() -> anyhow::Result<()> {
     svg.start_element("defs");
 
     for (symbol_id, (symbol, frames)) in symbol_map.iter().enumerate() {
-        debug_assert!(frames.len() >= 1);
+        debug_assert!(!frames.is_empty());
         if frames.len() > 1 {
             svg.start_element("symbol");
             svg.write_attribute_fmt("id", format_args!("{}", symbol_id));
