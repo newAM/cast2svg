@@ -18,7 +18,7 @@ xmlwriter = "~0.1.0"
 vte = "~0.9.0"
 log = "~0.4.11"
 stderrlog = "~0.5.0"
-anyhow = "^1.0.36"
+anyhow = "^1.0.37"
 
 [dependencies.clap]
 version = "3.0.0-beta.2"
