@@ -164,7 +164,7 @@ impl Symbol {
         // '<' is escaped by xmlwriter, but not the others.
         const ESCAPES: &[(&str, &str)] = &[
             ("&", "&amp;"), // must be first
-            (">", "&lt;"),
+            (">", "&gt;"),
             ("\"", "&quot;"),
             ("'", "&apos;"),
         ];
