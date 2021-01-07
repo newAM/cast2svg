@@ -428,12 +428,14 @@ fn main() -> anyhow::Result<()> {
     {
         let mut output = match args.output {
             Some(filepath) => {
-                std::fs::remove_file(&filepath).with_context(|| {
-                    format!(
-                        "Failed to remove existing output file: {}",
-                        filepath.to_string_lossy()
-                    )
-                })?;
+                if filepath.exists() {
+                    std::fs::remove_file(&filepath).with_context(|| {
+                        format!(
+                            "Failed to remove existing output file: {}",
+                            filepath.to_string_lossy()
+                        )
+                    })?;
+                }
                 Box::new(
                     OpenOptions::new()
                         .write(true)
