@@ -343,10 +343,7 @@ fn main() -> anyhow::Result<()> {
     );
 
     svg.start_element("g");
-    svg.write_attribute(
-        "font-family",
-        "Monaco,Consolas,Menlo,'Bitstream Vera Sans Mono','Powerline Symbols',monospace",
-    );
+    svg.write_attribute("font-family", "Courier New");
     svg.write_attribute_fmt("font-size", format_args!("{:.2}", FONT_SIZE));
     svg.start_element("defs");
 
