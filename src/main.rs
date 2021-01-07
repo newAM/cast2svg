@@ -55,6 +55,12 @@ struct Args {
     /// Render with window decorations.
     #[clap(long)]
     window: bool,
+    /// Width in columns, defaults to the value in asciicast header.
+    #[clap(long)]
+    width: Option<usize>,
+    /// Height in rows, defaults to the value in the asciicast header.
+    #[clap(long)]
+    height: Option<usize>,
 }
 
 fn viewbox_dimension(dimension: f64) -> String {
@@ -274,8 +280,11 @@ fn main() -> anyhow::Result<()> {
 
     let (width_pad, height_pad) = if args.window { (40, 60.0) } else { (0, 0.0) };
 
-    let svg_height: f64 = (header.height as f64) * HEIGHT_SCALE + height_pad;
-    let svg_width: usize = header.width * WIDTH_SCALE + width_pad;
+    let header_height: usize = args.height.unwrap_or(header.height);
+    let header_width: usize = args.width.unwrap_or(header.width);
+
+    let svg_height: f64 = (header_height as f64) * HEIGHT_SCALE + height_pad;
+    let svg_width: usize = header_width * WIDTH_SCALE + width_pad;
 
     svg.start_element("svg");
     svg.write_attribute_fmt("height", format_args!("{:.2}", svg_height));
