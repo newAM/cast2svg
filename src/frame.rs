@@ -478,7 +478,7 @@ impl vte::Perform for Frame {
             )
         };
         let mut params_iter = params.iter();
-        let mut next_param_or = |default: i64| {
+        let mut next_param_or = |default: u16| {
             params_iter
                 .next()
                 .map(|param| param[0])
