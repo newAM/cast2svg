@@ -26,4 +26,4 @@ features = ["derive", "suggestions", "color"]
 
 [dev-dependencies]
 assert_cmd = "^1.0.7"
-predicates = "^2.0.0"
+predicates = "^2.0.1"
