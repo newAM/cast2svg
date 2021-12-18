@@ -21,7 +21,7 @@ mod frame;
 
 use anyhow::Context;
 use asciicast::Header;
-use clap::{AppSettings, Clap, ValueHint};
+use clap::{Parser, ValueHint};
 use frame::{Frame, Symbol};
 
 use std::io::{BufRead, BufReader, Write};
@@ -37,8 +37,8 @@ const HEIGHT_SCALE: f64 = 21.71;
 const WIDTH_SCALE: usize = 10;
 
 /// Create an animated SVG from an ASCIICAST.
-#[derive(Debug, Clap)]
-#[clap(author, version, global_setting=AppSettings::ColoredHelp)]
+#[derive(Debug, Parser)]
+#[clap(author, version)]
 struct Args {
     /// Input asciicast file.
     #[clap(parse(from_os_str), value_hint=ValueHint::FilePath)]
