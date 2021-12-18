@@ -1,66 +1,70 @@
 on:
   push:
+    branches:
+      - main
+    tags:
+      - 'v*'
   pull_request:
   schedule:
-    - cron: "13 3 * * *"
+    - cron: "13 3 * * 2"
 
 name: CI
 
 jobs:
 
-  linux_build:
+  build:
     name: Build
     runs-on: ubuntu-latest
+    env: {"RUSTFLAGS": "-D warnings"}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: x86_64-unknown-linux-gnu
-      - run: RUSTFLAGS="-D warnings" cargo build
+      - run: cargo build
 
-  linux_test:
-    name: Unit Tests
+  test:
+    name: Test
     runs-on: ubuntu-latest
+    env: {"RUSTFLAGS": "-D warnings"}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: x86_64-unknown-linux-gnu
       - run: cargo test
 
-  clippy_check:
+  clippy:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           components: clippy
-      - uses: actions-rs/clippy-check@v1.0.7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features
+      # not using clippy-check due to this issue:
+      # https://github.com/actions-rs/clippy-check/issues/2
+      - run: cargo clippy -- --deny warnings
 
-  docs:
-    name: docs
+  doc:
+    name: doc
     runs-on: ubuntu-latest
+    env: {"RUSTDOCFLAGS": "-D warnings"}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - run: cargo install cargo-deadlinks
       - run: cargo doc
-      - run: cargo deadlinks
 
-  format_check:
+  format:
     name: Rust Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
